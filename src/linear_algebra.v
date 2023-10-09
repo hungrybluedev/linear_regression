@@ -120,31 +120,30 @@ pub fn (m Matrix) invert() !(Matrix, []int) {
 
 		// If the diagonal is zero, we need to swap with a row below us
 		if diagonal == 0.0 {
-			return error('Cannot invert matrix with zero on diagonal')
 			// Find a row below us that has a non-zero value in this column
-			// mut swap_row := -1
-			// for i := row + 1; i < augmented.rows; i++ {
-			// 	if augmented.data[i * augmented.cols + row] != 0.0 {
-			// 		swap_row = i
-			// 		break
-			// 	}
-			// }
+			mut swap_row := -1
+			for i := row + 1; i < augmented.rows; i++ {
+				if augmented.data[i * augmented.cols + row] != 0.0 {
+					swap_row = i
+					break
+				}
+			}
 
-			// if swap_row == -1 {
-			// 	return error('Cannot invert matrix with zero on diagonal')
-			// }
+			if swap_row == -1 {
+				return error('Cannot invert matrix with zero on diagonal')
+			}
 
-			// // Swap the rows
-			// for col in 0 .. augmented.cols {
-			// 	temp := augmented.data[row * augmented.cols + col]
-			// 	augmented.data[row * augmented.cols + col] = augmented.data[
-			// 		swap_row * augmented.cols + col]
-			// 	augmented.data[swap_row * augmented.cols + col] = temp
-			// }
+			// Swap the rows
+			for col in 0 .. augmented.cols {
+				temp := augmented.data[row * augmented.cols + col]
+				augmented.data[row * augmented.cols + col] = augmented.data[
+					swap_row * augmented.cols + col]
+				augmented.data[swap_row * augmented.cols + col] = temp
+			}
 
-			// // Store the swapped indices
-			// swapped_indices[row] = swap_row
-			// swapped_indices[swap_row] = row
+			// Store the swapped indices
+			swapped_indices[row] = swap_row
+			swapped_indices[swap_row] = row
 		}
 
 		// Then, we need to divide the row by the diagonal
@@ -213,20 +212,6 @@ pub fn (m Matrix) multiply(n Matrix) !Matrix {
 	return Matrix{
 		rows: m.rows
 		cols: n.cols
-		data: new_data
-	}
-}
-
-pub fn (m Matrix) swap_rows(swaps []int) Matrix {
-	mut new_data := []f64{len: m.data.len}
-	for row in 0 .. m.rows {
-		for col in 0 .. m.cols {
-			new_data[row * m.cols + col] = m.data[swaps[row] * m.cols + col]
-		}
-	}
-	return Matrix{
-		rows: m.rows
-		cols: m.cols
 		data: new_data
 	}
 }

@@ -88,26 +88,3 @@ fn test_inverse() ! {
 		assert swaps == all_swaps[index]
 	}
 }
-
-fn test_swaps() {
-	a := Matrix{
-		rows: 3
-		cols: 2
-		data: [1.0, 2, 3, 4, 5, 6]
-	}
-	swaps1 := [0, 1, 2]
-	swaps2 := [1, 0, 2]
-	swaps3 := [2, 1, 0]
-
-	assert a.swap_rows(swaps1) == a
-	assert a.swap_rows(swaps2) == Matrix{
-		rows: 3
-		cols: 2
-		data: [3.0, 4, 1, 2, 5, 6]
-	}
-	assert a.swap_rows(swaps3) == Matrix{
-		rows: 3
-		cols: 2
-		data: [5.0, 6, 3, 4, 1, 2]
-	}
-}
