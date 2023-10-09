@@ -51,3 +51,7 @@ accuracy := model.score(x_test, y_test)!
 // Use the model to make predictions
 predictions := model.predict(x_test)!
 ```
+
+## License
+
+This demonstration is licensed under the MIT license. See [LICENSE](LICENSE) for details.
