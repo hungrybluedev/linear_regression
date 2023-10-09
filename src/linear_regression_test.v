@@ -12,8 +12,8 @@ fn test_linear_regression() ! {
 		data: [1.0, 6, 8, 12]
 	}
 
-	theta := linear_regression(x, y)!
-	assert theta.close_to(Matrix{
+	model := LinearRegression.fit(['A1', 'A2'], x, y)!
+	assert model.theta.close_to(Matrix{
 		rows: 3
 		cols: 1
 		data: [-1.69, 3.48, -0.05]
