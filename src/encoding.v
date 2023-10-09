@@ -96,3 +96,18 @@ pub fn (m Matrix) str() string {
 
 	return output.str()
 }
+
+pub fn (model LinearRegression) str() string {
+	mut output := strings.new_builder(model.attributes.len * 10)
+
+	output.write_string('LinearRegression(\n')
+	for i, attribute in model.attributes {
+		output.write_string(pad_string_left(attribute, 16))
+		output.write_string(': ')
+		output.write_string('${model.theta.data[i]:+4.2f}')
+		output.write_string('\n')
+	}
+	output.write_string(')')
+
+	return output.str()
+}
