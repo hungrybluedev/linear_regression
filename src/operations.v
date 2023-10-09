@@ -2,8 +2,12 @@ module main
 
 import math
 import rand
+import rand.seed
+import rand.wyrand
 import strconv
 
+// select_columns returns a new dataset with the selected columns.
+// All the column names provided must exist in the dataset.
 fn (data TabularDataSet) select_columns(columns []string) !TabularDataSet {
 	// First, we ensure that all the columns exist and find out the indices
 	mut indices := map[string]int{}
@@ -44,47 +48,76 @@ fn (data TabularDataSet) select_columns(columns []string) !TabularDataSet {
 	}
 }
 
+// select_column returns a new dataset with the single selected column.
 pub fn (data TabularDataSet) select_column(column string) !TabularDataSet {
 	return data.select_columns([column])
 }
 
-pub fn split_train_test(x_data TabularDataSet, y_data TabularDataSet, test_size f64) !(TabularDataSet, TabularDataSet, TabularDataSet, TabularDataSet) {
-	mut shuffled_indices := []int{len: x_data.rows.len, init: index}
-	rand.shuffle(mut shuffled_indices) or { return error('Failed to shuffle indices') }
+[params]
+pub struct TrainTestSplitConfig {
+	x_data    TabularDataSet
+	y_data    TabularDataSet
+	test_size f64
+	seed      []u32 = []
+}
 
-	mut test_set_size := int(x_data.rows.len * test_size)
+// train_test_split splits the dataset into a training and a test set.
+// The test_size is a f64 value between 0 and 1
+pub fn train_test_split(config TrainTestSplitConfig) !(TabularDataSet, TabularDataSet, TabularDataSet, TabularDataSet) {
+	// Validation of input parameters
+	if config.x_data.rows.len != config.y_data.rows.len {
+		return error('The number of rows in the datasets must be the same')
+	}
+	if config.test_size <= 0 || config.test_size >= 1 {
+		return error('Invalid test size: ${config.test_size}')
+	}
+
+	// Use the provided seed or generate a random one from current time
+	rng_seed := if config.seed.len > 0 {
+		config.seed
+	} else {
+		seed.time_seed_array(wyrand.seed_len)
+	}
+	mut rng := rand.PRNG(wyrand.WyRandRNG{})
+	rng.seed(rng_seed)
+
+	mut shuffled_indices := []int{len: config.x_data.rows.len, init: index}
+	rng.shuffle(mut shuffled_indices) or { return error('Failed to shuffle indices') }
+
+	mut test_set_size := int(config.x_data.rows.len * config.test_size)
 	mut test_indices := shuffled_indices.clone()[0..test_set_size]
 	mut train_indices := shuffled_indices.clone()[test_set_size..]
 
 	mut x_train := []DataRow{cap: train_indices.len}
 	mut y_train := []DataRow{cap: train_indices.len}
 	for index in train_indices {
-		x_train << x_data.rows[index]
-		y_train << y_data.rows[index]
+		x_train << config.x_data.rows[index]
+		y_train << config.y_data.rows[index]
 	}
 
 	mut x_test := []DataRow{cap: test_indices.len}
 	mut y_test := []DataRow{cap: test_indices.len}
 	for index in test_indices {
-		x_test << x_data.rows[index]
-		y_test << y_data.rows[index]
+		x_test << config.x_data.rows[index]
+		y_test << config.y_data.rows[index]
 	}
 
 	return TabularDataSet{
-		headers: x_data.headers
+		headers: config.x_data.headers
 		rows: x_train
 	}, TabularDataSet{
-		headers: y_data.headers
+		headers: config.y_data.headers
 		rows: y_train
 	}, TabularDataSet{
-		headers: x_data.headers
+		headers: config.x_data.headers
 		rows: x_test
 	}, TabularDataSet{
-		headers: y_data.headers
+		headers: config.y_data.headers
 		rows: y_test
 	}
 }
 
+// as_matrix converts a dataset into a matrix of f64 values.
 pub fn (data TabularDataSet) as_matrix() !Matrix {
 	mut numbers := []f64{cap: data.rows.len * data.headers.len}
 	for index, row in data.rows {
@@ -102,6 +135,7 @@ pub fn (data TabularDataSet) as_matrix() !Matrix {
 	}
 }
 
+// close_to returns true if the matrix is close to another matrix.
 pub fn (m Matrix) close_to(other Matrix, local_eps f64) bool {
 	if m.rows != other.rows || m.cols != other.cols {
 		return false
@@ -118,4 +152,16 @@ pub fn (m Matrix) close_to(other Matrix, local_eps f64) bool {
 
 pub fn (m Matrix) == (other Matrix) bool {
 	return m.close_to(other, eps)
+}
+
+// Operations on elementary types
+
+// apply_swap swaps the elements in a matrix according to the provided swaps.
+pub fn apply_swap[T](mut data []T, swaps []int) {
+	for from, to in swaps {
+		if from == to {
+			continue
+		}
+		data[from], data[to] = data[to], data[from]
+	}
 }
