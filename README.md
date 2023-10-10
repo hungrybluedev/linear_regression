@@ -11,6 +11,8 @@ There are no dependencies, just a working V installation is required. All data p
 The following datasets are used for demonstration.
 
 1. [Student performance](https://archive.ics.uci.edu/dataset/320/student+performance).
+2. [Boston housing](https://www.kaggle.com/code/prasadperera/the-boston-housing-dataset/input).
+3. [Insurance cost](https://www.kaggle.com/datasets/mirichoi0218/insurance).
 
 ## Usage
 
