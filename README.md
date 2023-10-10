@@ -52,6 +52,14 @@ accuracy := model.score(x_test, y_test)!
 predictions := model.predict(x_test)!
 ```
 
+## Running the Examples
+
+From the root of the project, run the following command to run the examples:
+
+```bash
+v run examples/((example_name)).v
+```
+
 ## License
 
 This demonstration is licensed under the MIT license. See [LICENSE](LICENSE) for details.
