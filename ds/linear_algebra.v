@@ -1,4 +1,4 @@
-module main
+module ds
 
 pub fn Matrix.ones(rows int, cols int) !Matrix {
 	if rows < 1 || cols < 1 {

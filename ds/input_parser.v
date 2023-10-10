@@ -1,4 +1,4 @@
-module main
+module ds
 
 import os
 
@@ -20,7 +20,7 @@ pub fn TabularDataSet.from_file(config DataSetFileInputConfig) !TabularDataSet {
 		return error('File has only line: ${config.path}')
 	}
 
-	mut headers := contents[0].split(config.separator)
+	mut headers := contents[0].split(config.separator).map(it.trim_space()).filter(it.len > 0)
 
 	// Ensure that we do not have duplicates
 	for index := 0; index < headers.len; index++ {
@@ -35,7 +35,9 @@ pub fn TabularDataSet.from_file(config DataSetFileInputConfig) !TabularDataSet {
 
 	for index := 1; index < contents.len; index++ {
 		// The individual values are obtained by splitting the line by the "separator"
-		values := contents[index].split(config.separator)
+		values := contents[index]
+			.split(config.separator)
+			.map(it.trim_space()).filter(it.len > 0)
 
 		// Did we get the expected number of values?
 		if values.len != headers.len {

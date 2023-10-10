@@ -1,4 +1,4 @@
-module main
+module ds
 
 fn test_transpose() {
 	a := Matrix{

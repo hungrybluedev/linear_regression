@@ -1,4 +1,4 @@
-module main
+module ds
 
 fn test_linear_regression() ! {
 	x := Matrix{

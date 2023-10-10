@@ -1,7 +1,9 @@
 module main
 
+import ds
+
 fn main() {
-	full_data := TabularDataSet.from_file(path: 'data/student/student-mat.csv', separator: ';')!
+	full_data := ds.TabularDataSet.from_file(path: 'data/student/student-mat.csv', separator: ';')!
 
 	relevant_cols := ['G1', 'G2', 'G3', 'traveltime', 'studytime', 'failures', 'famrel', 'health']
 	predict_column := 'G3'
@@ -14,10 +16,10 @@ fn main() {
 
 	attempts := 50
 	mut best_score := 0.0
-	mut best_model := LinearRegression{}
+	mut best_model := ds.LinearRegression{}
 
 	for attempt in 0 .. attempts {
-		x_train_data, y_train_data, x_test_data, y_test_data := train_test_split(
+		x_train_data, y_train_data, x_test_data, y_test_data := ds.train_test_split(
 			x_data: x_data
 			y_data: y_data
 			test_size: 0.2
@@ -25,7 +27,7 @@ fn main() {
 
 		x_train, y_train, x_test, y_test := x_train_data.as_matrix()!, y_train_data.as_matrix()!, x_test_data.as_matrix()!, y_test_data.as_matrix()!
 
-		model := LinearRegression.fit(attributes, x_train, y_train)!
+		model := ds.LinearRegression.fit(attributes, x_train, y_train)!
 		accuracy := model.score(x_test, y_test)!
 
 		// predictions := model.predict(x_test)!

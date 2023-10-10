@@ -1,4 +1,4 @@
-module main
+module ds
 
 import math
 import rand
@@ -8,7 +8,7 @@ import strconv
 
 // select_columns returns a new dataset with the selected columns.
 // All the column names provided must exist in the dataset.
-fn (data TabularDataSet) select_columns(columns []string) !TabularDataSet {
+pub fn (data TabularDataSet) select_columns(columns []string) !TabularDataSet {
 	// First, we ensure that all the columns exist and find out the indices
 	mut indices := map[string]int{}
 	for column in columns {

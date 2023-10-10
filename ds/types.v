@@ -1,4 +1,4 @@
-module main
+module ds
 
 // Default epsilon value for floating point comparisons
 pub const eps = 1e-7

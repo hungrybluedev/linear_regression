@@ -1,4 +1,4 @@
-module main
+module ds
 
 import arrays
 import strings
